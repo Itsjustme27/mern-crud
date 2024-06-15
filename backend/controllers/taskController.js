@@ -32,7 +32,7 @@ module.exports.updateTasks = (req, res) => {
 module.exports.deleteTasks = (req, res) => {
     const {id} = req.params;
 
-    taskModels.findByIdAndDelete(id, {task}).then(() => {
+    taskModels.findByIdAndDelete(id).then(() => {
         res.send("Delete Successful!");
     }).catch((err) => {
         console.log(err);

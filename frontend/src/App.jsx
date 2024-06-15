@@ -8,6 +8,8 @@ const App = () => {
     const [input, setInput] = useState("");
     const [tasks, setTasks] = useState([]);
     const [updateUI, setUpdateUI] = useState(false);
+    const [updateId, setUpdateId] = useState(null);
+
   useEffect(() => {
     axios.get(`${baseURL}/get`).then((res) => {
       console.log(res.data);
@@ -23,22 +25,39 @@ const App = () => {
     })
   }
 
+  const updateMode = (id, text) => {
+    console.log(text);
+    setInput(text);
+    setUpdateId(id);
+  }
+
+  const updateTask = () => {
+    axios.put(`${baseURL}/update/${updateId}`, { task: input }).then((res) => {
+      console.log(res.data);  
+      setUpdateUI((prevState) => !prevState);
+      setUpdateId(null);
+      setInput("");
+    })
+  }
+
   return (
     <main>
-        <h1 className="title">CRUD OPERATION</h1>
+        <h1 className="title">CRUD OPERATION (Simple Todo List)</h1>
 
         <div className="inputHolder">
             <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
-            <button type='submit' onClick={addTask}>Add Task</button>
+            <button type='submit' onClick={updateId ? updateTask : addTask}>
+              {updateId ? "Update Task" : "Add Task"} 
+            </button>
         </div>
 
         <ul className='lists'>
             {tasks.map((task) => (
-              <List key={task._id} id={task._id} task={task.task} setUpdateUI={setUpdateUI}/>
+              <List key={task._id} id={task._id} task={task.task} setUpdateUI={setUpdateUI} updateMode={updateMode}/>
             ))}
         </ul>
     </main>
   )
 }
 
-export default App
+export default App;
